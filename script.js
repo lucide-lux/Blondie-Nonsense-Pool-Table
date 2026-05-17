@@ -11,6 +11,9 @@ let mouseX = 0;
 let mouseY = 0;
 let clicked = false;
 
+// ======================
+// CONFIG
+// ======================
 const TABLE_W = 900;
 const TABLE_H = 500;
 const BALL_SIZE = 40;
@@ -18,61 +21,30 @@ const PAD = 45;
 const SPEED = 12;
 
 // ======================
-// messages (FIXED)
+// MESSAGES
 // ======================
 const messages = [
-  {
-    text: "★ Reminder that somewhere, a cat is sleeping in a very weird position and somehow everything is still functioning. Kinda looks like you stretching on the floor. ",
-    img: "assets/cat.png"
-  },
-  {
-    text: "★ Hope your brain is less loud today. ★ And that something midly excellent happens to you. Like unexpectedly seing a cool plane over your head. Or extra comfy socks. ",
-    img: "assets/silly.png"
-  },
-  {
-    text: "★I swear hiking is just voluntarily becoming a damp donkey for several hours. Does the word voluntarily even exist ? Bref. Hope your thoughts become less sharp around the edges on this bright (is it bright ?) day. ",
-   
-  },
-  {
-    text: "★ Gothic cathedrals are just medieval bros saying duuuude watch this, talking about rocks.",
-    img: "assets/cathedral.png"
-  },
-  {
-    text: "★ ⋆˚꩜｡Just some fishes and a warm hug today 𓆝 𓆟 𓆞 𓆝 𓆟",
-  
-  },
-  {
-    text: "★ Hedgehog update : confidence level remains unjustifiably high. What are you doing at one sniffing the floor you worms junkie ? It's my garden.",
-    img: "assets/hedgehog.jpeg"
-  },
-  {
-    text: "★ Just checking in from somewhere in the world where pigeons still walk around like tiny divorced alcoohlic detectives.",
-    img: "assets/pigeon.png"
-  },
-  {
-    text: "★ Sending support from the department of we're-all-improvising. The important is that we remain funnier than ours problems so we can outsmart them. You're pretty funny.",
-    img: "assets/silly2.png"
-  },
-  {
-    text: "★ Please enjoy this certified low pressure ★nOncHaLEnT★ hello. ( ¬ᴗ¬) <  Hello sexy wassup",
-  
-  },
-  {
-    text: "★ You made it 'till here hehehe ! Summer is not far. Tiny reminder that you're still connected to some people out there.",
-
-  }
+  { text: "★ Reminder that somewhere, a cat is sleeping in a very weird position and somehow everything is still functioning. Kinda looks like you stretching on the floor.", img: "assets/cat.png" },
+  { text: "★ Hope your brain is less loud today. ★ And that something midly excellent happens to you. Like unexpectedly seing a cool plane over your head. Or extra comfy socks.", img: "assets/silly.png" },
+  { text: "★ I swear hiking is just voluntarily becoming a damp donkey for several hours. Does the word voluntarily even exist ? Bref. Hope your thoughts become less sharp around the edges on this bright (is it bright ?) day.", img: "assets/hike.png" },
+  { text: "★ Gothic cathedrals are just medieval bros saying duuuude watch this, talking about rocks.", img: "assets/cathedral.png" },
+  { text: "★ ⋆˚꩜｡Just some fishes and a warm hug today 𓆝 𓆟 𓆞 𓆝 𓆟.", img: "assets/fish.png" },
+  { text: "★ Hedgehog update : confidence level remains unjustifiably high. What are you doing at one sniffing the floor you worms junkie ? It's my garden.", img: "assets/hedgehog.jpeg" },
+  { text: "★ Just checking in from somewhere in the world where pigeons still walk around like tiny divorced alcoohlic detectives.", img: "assets/pigeon.png" },
+  { text: "★ Sending support from the department of we're-all-improvising. The important is that we remain funnier than ours problems so we can outsmart them. You're funny.", img: "assets/silly2.png" },
+  { text: "★ Please enjoy this certified low pressure ★nOncHaLEnT★ hello. ( ¬ᴗ¬) <  Hello sexy wassup", img: "assets/hello.png" },
+  { text: "★ You made it 'till here hehehe ! Summer is not far. Tiny reminder that you're still connected to some people out there.", img: "assets/summer.png" }
 ];
 
-// afficher message au chargement
+// message initial
 const msg = messages[Math.floor(Math.random() * messages.length)];
-
 messageText.innerHTML = `
   ${msg.text}<br>
-  <img src="${msg.img}" style="width:60px;">
+  ${msg.img ? `<img src="${msg.img}" style="width:60px;">` : ""}
 `;
 
 // ======================
-// trous
+// HOLES
 // ======================
 const holes = [
   { x: 45, y: 45 },
@@ -84,7 +56,7 @@ const holes = [
 ];
 
 // ======================
-// boules
+// BALLS
 // ======================
 const physicsBalls = [
   { element: specialBall, x: 180, y: 210, vx: 0, vy: 0, alive: true },
@@ -94,22 +66,33 @@ const physicsBalls = [
 ];
 
 // ======================
-// souris (1 seul listener)
+// POINTER (PC + MOBILE)
 // ======================
-document.addEventListener("mousemove", (e) => {
+function updatePointer(clientX, clientY) {
   const rect = document.getElementById("game").getBoundingClientRect();
-  mouseX = e.clientX - rect.left;
-  mouseY = e.clientY - rect.top;
 
-  // 🎱 queue = curseur
-  cue.style.left = e.clientX + "px";
-  cue.style.top = e.clientY + "px";
+  mouseX = clientX - rect.left;
+  mouseY = clientY - rect.top;
+
+  cue.style.left = clientX + "px";
+  cue.style.top = clientY + "px";
+}
+
+// PC
+document.addEventListener("mousemove", (e) => {
+  updatePointer(e.clientX, e.clientY);
 });
 
+// MOBILE
+document.addEventListener("touchmove", (e) => {
+  const t = e.touches[0];
+  updatePointer(t.clientX, t.clientY);
+}, { passive: true });
+
 // ======================
-// tir
+// SHOOT FUNCTION
 // ======================
-specialBall.addEventListener("click", () => {
+function shoot() {
   if (clicked) return;
   clicked = true;
 
@@ -129,32 +112,50 @@ specialBall.addEventListener("click", () => {
 
   setTimeout(() => {
     const day = new Date().getDate();
-    const msg = messages[day % messages.length];
+    const m = messages[day % messages.length];
 
     messageText.innerHTML = `
-      ${msg.text}<br>
-      <img src="${msg.img}" style="width:60px;">
+      ${m.text}<br>
+      ${m.img ? `<img src="${m.img}" style="width:60px;">` : ""}
     `;
 
     messageBox.style.opacity = 1;
   }, 2000);
+}
+
+// PC click
+specialBall.addEventListener("click", shoot);
+
+// MOBILE tap
+document.addEventListener("touchstart", (e) => {
+  const t = e.touches[0];
+  const rect = document.getElementById("game").getBoundingClientRect();
+
+  const x = t.clientX - rect.left;
+  const y = t.clientY - rect.top;
+
+  const dx = x - physicsBalls[0].x;
+  const dy = y - physicsBalls[0].y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+
+  if (dist < 60) shoot();
 });
 
 // ======================
-// collision trous
+// HOLE CHECK
 // ======================
 function checkHole(ball) {
-  for (let hole of holes) {
-    const dx = ball.x - hole.x;
-    const dy = ball.y - hole.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < 30) return true;
+  for (let h of holes) {
+    const dx = ball.x - h.x;
+    const dy = ball.y - h.y;
+    const d = Math.sqrt(dx * dx + dy * dy);
+    if (d < 30) return true;
   }
   return false;
 }
 
 // ======================
-// animation
+// ANIMATION
 // ======================
 function animate() {
 
@@ -210,12 +211,12 @@ function animate() {
 }
 
 // ======================
-// init positions
+// INIT POSITIONS
 // ======================
 physicsBalls.forEach(b => {
   b.element.style.left = b.x + "px";
   b.element.style.top = b.y + "px";
 });
 
-// start
+// START
 animate();
