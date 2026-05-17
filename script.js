@@ -7,63 +7,96 @@ const cue = document.getElementById("cue");
 const messageBox = document.getElementById("messageBox");
 const messageText = document.getElementById("messageText");
 
-let mouseX = 0;
-let mouseY = 0;
+let pointerX = 0;
+let pointerY = 0;
 let clicked = false;
 
 // ======================
-// CONFIG
+// TABLE RESPONSIVE
 // ======================
-const TABLE_W = 900;
-const TABLE_H = 500;
-const BALL_SIZE = 40;
-const PAD = 45;
-const SPEED = 12;
+function getTable() {
+  const game = document.getElementById("game");
+  return {
+    w: game.clientWidth,
+    h: game.clientHeight
+  };
+}
 
 // ======================
-// MESSAGES
+// MESSAGES (TES MESSAGES COMPLETS)
 // ======================
 const messages = [
-  { text: "★ Reminder that somewhere, a cat is sleeping in a very weird position and somehow everything is still functioning. Kinda looks like you stretching on the floor.", img: "assets/cat.png" },
-  { text: "★ Hope your brain is less loud today. ★ And that something midly excellent happens to you. Like unexpectedly seing a cool plane over your head. Or extra comfy socks.", img: "assets/silly.png" },
-  { text: "★ I swear hiking is just voluntarily becoming a damp donkey for several hours. Does the word voluntarily even exist ? Bref. Hope your thoughts become less sharp around the edges on this bright (is it bright ?) day.", img: "assets/hike.png" },
-  { text: "★ Gothic cathedrals are just medieval bros saying duuuude watch this, talking about rocks.", img: "assets/cathedral.png" },
-  { text: "★ ⋆˚꩜｡Just some fishes and a warm hug today 𓆝 𓆟 𓆞 𓆝 𓆟.", img: "assets/fish.png" },
-  { text: "★ Hedgehog update : confidence level remains unjustifiably high. What are you doing at one sniffing the floor you worms junkie ? It's my garden.", img: "assets/hedgehog.jpeg" },
-  { text: "★ Just checking in from somewhere in the world where pigeons still walk around like tiny divorced alcoohlic detectives.", img: "assets/pigeon.png" },
-  { text: "★ Sending support from the department of we're-all-improvising. The important is that we remain funnier than ours problems so we can outsmart them. You're funny.", img: "assets/silly2.png" },
-  { text: "★ Please enjoy this certified low pressure ★nOncHaLEnT★ hello. ( ¬ᴗ¬) <  Hello sexy wassup", img: "assets/hello.png" },
-  { text: "★ You made it 'till here hehehe ! Summer is not far. Tiny reminder that you're still connected to some people out there.", img: "assets/summer.png" }
+  {
+    text: "★ Reminder that somewhere, a cat is sleeping in a very weird position and somehow everything is still functioning. Kinda looks like you stretching on the floor.",
+    img: "assets/cat.png"
+  },
+  {
+    text: "★ Hope your brain is less loud today. ★ And that something midly excellent happens to you. Like unexpectedly seing a cool plane over your head. Or extra comfy socks.",
+    img: "assets/silly.png"
+  },
+  {
+    text: "★ I swear hiking is just voluntarily becoming a damp donkey for several hours. Does the word voluntarily even exist ? Bref. Hope your thoughts become less sharp around the edges on this bright (is it bright ?) day."
+  },
+  {
+    text: "★ Gothic cathedrals are just medieval bros saying duuuude watch this, talking about rocks.",
+    img: "assets/cathedral.png"
+  },
+  {
+    text: "★ ⋆˚꩜｡Just some fishes and a warm hug today 𓆝 𓆟 𓆞 𓆝 𓆟"
+  },
+  {
+    text: "★ Hedgehog update : confidence level remains unjustifiably high. What are you doing at one sniffing the floor you worms junkie ? It's my garden.",
+    img: "assets/hedgehog.jpeg"
+  },
+  {
+    text: "★ Just checking in from somewhere in the world where pigeons still walk around like tiny divorced alcoohlic detectives.",
+    img: "assets/pigeon.png"
+  },
+  {
+    text: "★ Sending support from the department of we're-all-improvising. The important is that we remain funnier than ours problems so we can outsmart them. You're pretty funny.",
+    img: "assets/silly2.png"
+  },
+  {
+    text: "★ Please enjoy this certified low pressure ★nOncHaLEnT★ hello. ( ¬ᴗ¬) <  Hello sexy wassup"
+  },
+  {
+    text: "★ You made it 'till here hehehe ! Summer is not far. Tiny reminder that you're still connected to some people out there."
+  }
 ];
 
 // message initial
 const msg = messages[Math.floor(Math.random() * messages.length)];
 messageText.innerHTML = `
-  ${msg.text}<br>
-  ${msg.img ? `<img src="${msg.img}" style="width:60px;">` : ""}
+  ${msg.text}
+  ${msg.img ? `<br><img src="${msg.img}" style="width:60px;">` : ""}
 `;
-
-// ======================
-// HOLES
-// ======================
-const holes = [
-  { x: 45, y: 45 },
-  { x: 450, y: 45 },
-  { x: 855, y: 45 },
-  { x: 45, y: 455 },
-  { x: 450, y: 455 },
-  { x: 855, y: 455 }
-];
 
 // ======================
 // BALLS
 // ======================
 const physicsBalls = [
-  { element: specialBall, x: 180, y: 210, vx: 0, vy: 0, alive: true },
-  { element: ball1, x: 650, y: 210, vx: 0, vy: 0, alive: true },
-  { element: ball2, x: 690, y: 190, vx: 0, vy: 0, alive: true },
-  { element: ball3, x: 690, y: 230, vx: 0, vy: 0, alive: true }
+  { element: specialBall, x: 150, y: 150, vx: 0, vy: 0, alive: true },
+  { element: ball1, x: 300, y: 200, vx: 0, vy: 0, alive: true },
+  { element: ball2, x: 350, y: 180, vx: 0, vy: 0, alive: true },
+  { element: ball3, x: 350, y: 220, vx: 0, vy: 0, alive: true }
 ];
+
+// ======================
+// HOLES (RESPONSIVE)
+// ======================
+function getHoles() {
+  const { w, h } = getTable();
+
+  return [
+    { x: 30, y: 30 },
+    { x: w / 2, y: 30 },
+    { x: w - 30, y: 30 },
+
+    { x: 30, y: h - 30 },
+    { x: w / 2, y: h - 30 },
+    { x: w - 30, y: h - 30 }
+  ];
+}
 
 // ======================
 // POINTER (PC + MOBILE)
@@ -71,8 +104,8 @@ const physicsBalls = [
 function updatePointer(clientX, clientY) {
   const rect = document.getElementById("game").getBoundingClientRect();
 
-  mouseX = clientX - rect.left;
-  mouseY = clientY - rect.top;
+  pointerX = clientX - rect.left;
+  pointerY = clientY - rect.top;
 
   cue.style.left = clientX + "px";
   cue.style.top = clientY + "px";
@@ -90,7 +123,7 @@ document.addEventListener("touchmove", (e) => {
 }, { passive: true });
 
 // ======================
-// SHOOT FUNCTION
+// SHOOT
 // ======================
 function shoot() {
   if (clicked) return;
@@ -107,16 +140,16 @@ function shoot() {
   const dy = target.y - physicsBalls[0].y;
   const len = Math.sqrt(dx * dx + dy * dy);
 
-  physicsBalls[0].vx = (dx / len) * SPEED;
-  physicsBalls[0].vy = (dy / len) * SPEED;
+  physicsBalls[0].vx = (dx / len) * 12;
+  physicsBalls[0].vy = (dy / len) * 12;
 
   setTimeout(() => {
     const day = new Date().getDate();
     const m = messages[day % messages.length];
 
     messageText.innerHTML = `
-      ${m.text}<br>
-      ${m.img ? `<img src="${m.img}" style="width:60px;">` : ""}
+      ${m.text}
+      ${m.img ? `<br><img src="${m.img}" style="width:60px;">` : ""}
     `;
 
     messageBox.style.opacity = 1;
@@ -126,7 +159,7 @@ function shoot() {
 // PC click
 specialBall.addEventListener("click", shoot);
 
-// MOBILE tap
+// MOBILE tap near cue ball
 document.addEventListener("touchstart", (e) => {
   const t = e.touches[0];
   const rect = document.getElementById("game").getBoundingClientRect();
@@ -142,9 +175,11 @@ document.addEventListener("touchstart", (e) => {
 });
 
 // ======================
-// HOLE CHECK
+// COLLISION HOLES
 // ======================
 function checkHole(ball) {
+  const holes = getHoles();
+
   for (let h of holes) {
     const dx = ball.x - h.x;
     const dy = ball.y - h.y;
@@ -159,6 +194,7 @@ function checkHole(ball) {
 // ======================
 function animate() {
 
+  const { w, h } = getTable();
   const cueBall = physicsBalls[0];
 
   physicsBalls.forEach(ball => {
@@ -176,10 +212,10 @@ function animate() {
     ball.x += ball.vx;
     ball.y += ball.vy;
 
-    const minX = PAD;
-    const maxX = TABLE_W - PAD - BALL_SIZE;
-    const minY = PAD;
-    const maxY = TABLE_H - PAD - BALL_SIZE;
+    const minX = 20;
+    const maxX = w - 20;
+    const minY = 20;
+    const maxY = h - 20;
 
     if (ball.x <= minX || ball.x >= maxX) ball.vx *= -1;
     if (ball.y <= minY || ball.y >= maxY) ball.vy *= -1;
@@ -194,7 +230,6 @@ function animate() {
   // collisions
   for (let i = 1; i < physicsBalls.length; i++) {
     const b = physicsBalls[i];
-
     if (!b.alive) continue;
 
     const dx = cueBall.x - b.x;
@@ -211,7 +246,7 @@ function animate() {
 }
 
 // ======================
-// INIT POSITIONS
+// INIT
 // ======================
 physicsBalls.forEach(b => {
   b.element.style.left = b.x + "px";
