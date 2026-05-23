@@ -87,7 +87,7 @@ const messages = [
     text:
       "★ Gothic cathedrals are just medieval bros saying duuuude watch this, talking about rocks. I have so many cool buildings you could make 3D brain models of to show you.",
     image:
-      "assets/cathedral.png"
+      "assets/cathédrale.png"
   },
 
   {
