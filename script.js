@@ -97,9 +97,9 @@ const messages = [
 
   {
     text:
-      "★ Hedgehog update : confidence level remains unjustifiably high. What are you doing at one sniffing the floor you worms junkie ? It's my garden.",
+      "★ Hedgehog update : confidence level remains unjustifiably high. What are you doing at 01AM sniffing the floor you worm junkie ? It's my garden.",
     image:
-      "assets/hérisson2.jpeg"
+      "assets/hérisson2.png"
   },
 
   {
