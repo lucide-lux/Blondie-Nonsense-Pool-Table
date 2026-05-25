@@ -97,7 +97,7 @@ const messages = [
 
   {
     text:
-      "★ Hedgehog update : confidence level remains unjustifiably high. What are you doing at 01AM sniffing the floor you worm junkie ? It's my garden.",
+      "★ Hello to you too. Jesus the hedgehog (that's his name) is doing well, and continues to noisily dig in the earth in search of insects as if the garden was hos own.",
     image:
       "assets/hérisson2.png"
   },
