@@ -97,7 +97,7 @@ const messages = [
 
   {
     text:
-      "★ Hello to you too. Jesus the hedgehog (that's his name) is doing well, and continues to noisily dig in the earth in search of insects as if the garden was hos own.",
+      "★ Hello to you too. Jesus the hedgehog (that's his name) is doing well, and continues to noisily dig in the earth in search of insects as if the garden was his own.",
     image:
       "assets/hérisson2.png"
   },
