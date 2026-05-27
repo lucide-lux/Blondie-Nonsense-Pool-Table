@@ -64,67 +64,10 @@ const messages = [
 
   {
     text:
-      "★ Reminder that somewhere, a cat is sleeping in a very weird position and somehow everything is still functioning. Kinda looks like you stretching on the floor.",
-    image:
-      "assets/cat.png"
+      "★ Today is the last game of pool table, I've coded it only for 10 days. But whenever you feel down or sadder than usual, text -nonsense pool table- for subscribing again with new daily bullshit. I’m leaving this conversation hoping there’s a next time in person (?).",
+    image: silly3.png
+      
   },
-
-  {
-    text:
-      "★ Hope your brain is less loud today. ★ And that something mildly excellent happens to you. Like unexpectedly seeing a cool plane over your head. Or extra comfy socks.",
-    image:
-      "assets/silly.png"
-  },
-
-  {
-    text:
-      "★ Do you see what I see ? Bref. Hope your thoughts become less sharp around the edges on this bright (is it bright ?) day.",
-    image:
-      "assets/dick.jpeg"
-  },
-
-  {
-    text:
-      "★ Gothic cathedrals are just medieval bros saying duuuude watch this, talking about rocks. I have so many cool buildings you could make 3D brain models of.",
-    image:
-      "assets/cathédrale.png"
-  },
-
-  {
-    text:
-      "★ ⋆˚꩜｡Just some fishes and a warm hug today 𓆝 𓆟 𓆞 𓆝 𓆟"
-  },
-
-  {
-    text:
-      "★ Hello to you too. Jesus the hedgehog (that's his name) is doing well, and continues to noisily dig in the earth in search of insects as if the garden was his own.",
-    image:
-      "assets/hérisson2.png"
-  },
-
-  {
-    text:
-      "★ Just checking in from somewhere in the world where pigeons still walk around like tiny divorced alcoholic detectives.",
-    image:
-      "assets/pigeon.png"
-  },
-
-  {
-    text:
-      "★ Sending support from the department of we're-all-improvising. The important thing is that we remain funnier than our problems so we can outsmart them. You're pretty funny.",
-    image:
-      "assets/silly2.png"
-  },
-
-  {
-    text:
-      "★ Please enjoy this certified low pressure ★nOncHaLEnT★ hello. ( ¬ᴗ¬) < Hello sexy wassup"
-  },
-
-  {
-    text:
-      "★ You made it till here hehehe ! Summer is not far. Tiny reminder that you're still connected to some people out there."
-  }
 
 ];
 
