@@ -80,7 +80,7 @@ const messages = [
   {
 
     text:
-      "★ Today is the last game of pool table, I've coded it only for 10 days. But whenever you feel down or sadder than usual, text -nonsense pool table- for subscribing again with new daily bullshit. I’m leaving this conversation hoping there’s a next time in person (?)",
+      "★ Today is the last game of pool table, I've coded it only for 10 days. But whenever you feel down or sadder than usual, text -nonsense pool table- for subscribing again with new daily bullshit. I’m leaving this conversationand to the next time in person if you want to.",
 
     image:
       "assets/silly3.png"
