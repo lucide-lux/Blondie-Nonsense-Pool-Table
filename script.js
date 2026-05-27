@@ -1,14 +1,24 @@
-// ======================
+// =====================================================
 // ELEMENTS HTML
-// ======================
+// =====================================================
 
-const firstBallElement = document.getElementById("ball1");
-const secondBallElement = document.getElementById("ball2");
-const thirdBallElement = document.getElementById("ball3");
+const gameTableElement =
+  document.getElementById("game");
 
-const cueBallElement = document.getElementById("specialBall");
+const firstBallElement =
+  document.getElementById("ball1");
 
-const cueElement = document.getElementById("cue");
+const secondBallElement =
+  document.getElementById("ball2");
+
+const thirdBallElement =
+  document.getElementById("ball3");
+
+const cueBallElement =
+  document.getElementById("specialBall");
+
+const cueElement =
+  document.getElementById("cue");
 
 const messageBoxElement =
   document.getElementById("messageBox");
@@ -17,9 +27,9 @@ const messageTextElement =
   document.getElementById("messageText");
 
 
-// ======================
+// =====================================================
 // VARIABLES GLOBALES
-// ======================
+// =====================================================
 
 let pointerPositionX = 0;
 let pointerPositionY = 0;
@@ -27,126 +37,170 @@ let pointerPositionY = 0;
 let hasShot = false;
 
 
-// ======================
+// =====================================================
 // CONSTANTES PHYSIQUES
-// ======================
+// =====================================================
 
 const ballRadius = 20;
 
-const tableCushionSize = 45;
+const tableCushionSize = 40;
 
-const friction = 0.99;
+const frictionStrength = 0.985;
 
-const reboundStrength = 0.95;
+const reboundStrength = 0.92;
+
+const pocketRadius = 32;
+
+const shotPower = 12;
 
 
-// ======================
-// RECUPERATION TABLE
-// ======================
+// =====================================================
+// TABLE
+// =====================================================
 
 function getTableDimensions() {
 
-  const gameElement =
-    document.getElementById("game");
-
   return {
-    width: gameElement.clientWidth,
-    height: gameElement.clientHeight
+
+    width:
+      gameTableElement.clientWidth,
+
+    height:
+      gameTableElement.clientHeight
   };
 }
 
 
-// ======================
+// =====================================================
 // MESSAGES
-// ======================
+// =====================================================
 
 const messages = [
 
   {
+
     text:
       "★ Today is the last game of pool table, I've coded it only for 10 days. But whenever you feel down or sadder than usual, text -nonsense pool table- for subscribing again with new daily bullshit. I’m leaving this conversation hoping there’s a next time in person (?)",
+
     image:
       "silly3.png"
-  },
+  }
 
 ];
 
 
-// ======================
-// MESSAGE INITIAL
-// ======================
-
-const randomMessage =
-  messages[Math.floor(Math.random() * messages.length)];
-
-displayMessage(randomMessage);
-
-
-// ======================
+// =====================================================
 // AFFICHAGE MESSAGE
-// ======================
+// =====================================================
 
 function displayMessage(messageObject) {
 
+  if (!messageObject) {
+    return;
+  }
+
+  let imageHtml = "";
+
+  if (messageObject.image) {
+
+    imageHtml = `
+      <br>
+
+      <img
+        src="${messageObject.image}"
+
+        style="
+          width:60px;
+          margin-top:10px;
+        "
+      >
+    `;
+  }
+
   messageTextElement.innerHTML = `
     ${messageObject.text}
-    ${
-      messageObject.image
-        ? `<br><img src="${messageObject.image}" style="width:60px;">`
-        : ""
-    }
+    ${imageHtml}
   `;
 }
 
 
-// ======================
-// BALLES PHYSIQUES
-// ======================
+// =====================================================
+// MESSAGE INITIAL
+// =====================================================
+
+displayMessage(messages[0]);
+
+
+// =====================================================
+// BALLES
+// =====================================================
 
 const billiardBalls = [
 
   {
-    element: cueBallElement,
-    positionX: 150,
-    positionY: 150,
-    velocityX: 0,
-    velocityY: 0,
-    isVisible: true
-  },
 
-  {
-    element: firstBallElement,
-    positionX: 300,
-    positionY: 200,
-    velocityX: 0,
-    velocityY: 0,
-    isVisible: true
-  },
+    element:
+      cueBallElement,
 
-  {
-    element: secondBallElement,
-    positionX: 350,
+    positionX: 160,
     positionY: 180,
+
     velocityX: 0,
     velocityY: 0,
+
+    isVisible: true,
+
+    isCueBall: true
+  },
+
+  {
+
+    element:
+      firstBallElement,
+
+    positionX: 520,
+    positionY: 180,
+
+    velocityX: 0,
+    velocityY: 0,
+
     isVisible: true
   },
 
   {
-    element: thirdBallElement,
-    positionX: 350,
-    positionY: 220,
+
+    element:
+      secondBallElement,
+
+    positionX: 570,
+    positionY: 150,
+
     velocityX: 0,
     velocityY: 0,
+
+    isVisible: true
+  },
+
+  {
+
+    element:
+      thirdBallElement,
+
+    positionX: 570,
+    positionY: 210,
+
+    velocityX: 0,
+    velocityY: 0,
+
     isVisible: true
   }
 
 ];
 
 
-// ======================
+// =====================================================
 // TROUS
-// ======================
+// =====================================================
 
 function getPocketPositions() {
 
@@ -156,49 +210,50 @@ function getPocketPositions() {
   return [
 
     {
-      x: 30,
-      y: 30
+      x: 25,
+      y: 25
     },
 
     {
       x: tableDimensions.width / 2,
-      y: 30
+      y: 25
     },
 
     {
-      x: tableDimensions.width - 30,
-      y: 30
+      x: tableDimensions.width - 25,
+      y: 25
     },
 
     {
-      x: 30,
-      y: tableDimensions.height - 30
+      x: 25,
+      y: tableDimensions.height - 25
     },
 
     {
       x: tableDimensions.width / 2,
-      y: tableDimensions.height - 30
+      y: tableDimensions.height - 25
     },
 
     {
-      x: tableDimensions.width - 30,
-      y: tableDimensions.height - 30
+      x: tableDimensions.width - 25,
+      y: tableDimensions.height - 25
     }
 
   ];
 }
 
 
-// ======================
-// SOURIS + MOBILE
-// ======================
+// =====================================================
+// POSITION SOURIS ET TACTILE
+// =====================================================
 
-function updatePointerPosition(clientX, clientY) {
+function updatePointerPosition(
+  clientX,
+  clientY
+) {
 
   const tableRectangle =
-    document
-      .getElementById("game")
-      .getBoundingClientRect();
+    gameTableElement.getBoundingClientRect();
 
   pointerPositionX =
     clientX - tableRectangle.left;
@@ -206,15 +261,21 @@ function updatePointerPosition(clientX, clientY) {
   pointerPositionY =
     clientY - tableRectangle.top;
 
-  cueElement.style.left =
-    clientX + "px";
+  if (cueElement) {
 
-  cueElement.style.top =
-    clientY + "px";
+    cueElement.style.left =
+      pointerPositionX + "px";
+
+    cueElement.style.top =
+      pointerPositionY + "px";
+  }
 }
 
 
-// PC
+// =====================================================
+// SOURIS
+// =====================================================
+
 document.addEventListener(
   "mousemove",
   function (event) {
@@ -227,7 +288,10 @@ document.addEventListener(
 );
 
 
+// =====================================================
 // MOBILE
+// =====================================================
+
 document.addEventListener(
   "touchmove",
   function (event) {
@@ -239,14 +303,16 @@ document.addEventListener(
       touch.clientX,
       touch.clientY
     );
+
+    event.preventDefault();
   },
-  { passive: true }
+  { passive: false }
 );
 
 
-// ======================
+// =====================================================
 // TIR
-// ======================
+// =====================================================
 
 function shootCueBall() {
 
@@ -256,24 +322,22 @@ function shootCueBall() {
 
   hasShot = true;
 
-  billiardBalls.forEach(function (ball) {
+  const cueBall =
+    billiardBalls[0];
 
-    ball.velocityX = 0;
-    ball.velocityY = 0;
-  });
+  const randomBallIndex =
+    1 + Math.floor(Math.random() * 3);
 
-  const randomTargetBall =
-    billiardBalls[
-      1 + Math.floor(Math.random() * 3)
-    ];
+  const targetBall =
+    billiardBalls[randomBallIndex];
 
   const distanceX =
-    randomTargetBall.positionX -
-    billiardBalls[0].positionX;
+    targetBall.positionX -
+    cueBall.positionX;
 
   const distanceY =
-    randomTargetBall.positionY -
-    billiardBalls[0].positionY;
+    targetBall.positionY -
+    cueBall.positionY;
 
   const distanceLength =
     Math.sqrt(
@@ -281,86 +345,67 @@ function shootCueBall() {
       distanceY * distanceY
     );
 
-  billiardBalls[0].velocityX =
-    (distanceX / distanceLength) * 12;
+  if (distanceLength === 0) {
+    return;
+  }
 
-  billiardBalls[0].velocityY =
-    (distanceY / distanceLength) * 12;
+  cueBall.velocityX =
+    (distanceX / distanceLength)
+    * shotPower;
+
+  cueBall.velocityY =
+    (distanceY / distanceLength)
+    * shotPower;
 
   setTimeout(function () {
 
-    const currentDay =
-      new Date().getDate();
+    displayMessage(messages[0]);
 
-    const selectedMessage =
-      messages[currentDay % messages.length];
+    messageBoxElement.style.opacity =
+      1;
 
-    displayMessage(selectedMessage);
-
-    messageBoxElement.style.opacity = 1;
-
-  }, 2000);
+  }, 1800);
 }
 
 
-// ======================
-// CLIC PC
-// ======================
+// =====================================================
+// CLIC ORDINATEUR
+// =====================================================
 
 cueBallElement.addEventListener(
   "click",
-  shootCueBall
-);
+  function () {
 
-
-// ======================
-// TAP MOBILE
-// ======================
-
-document.addEventListener(
-  "touchstart",
-  function (event) {
-
-    const touch =
-      event.touches[0];
-
-    const tableRectangle =
-      document
-        .getElementById("game")
-        .getBoundingClientRect();
-
-    const touchPositionX =
-      touch.clientX - tableRectangle.left;
-
-    const touchPositionY =
-      touch.clientY - tableRectangle.top;
-
-    const distanceX =
-      touchPositionX -
-      billiardBalls[0].positionX;
-
-    const distanceY =
-      touchPositionY -
-      billiardBalls[0].positionY;
-
-    const touchDistance =
-      Math.sqrt(
-        distanceX * distanceX +
-        distanceY * distanceY
-      );
-
-    if (touchDistance < 60) {
-      shootCueBall();
-    }
+    shootCueBall();
   }
 );
 
 
-// ======================
-// VERIFICATION TROU
-// ======================
+// =====================================================
+// TACTILE MOBILE
+// =====================================================
+
+cueBallElement.addEventListener(
+  "touchstart",
+  function (event) {
+
+    event.preventDefault();
+
+    shootCueBall();
+  },
+  { passive: false }
+);
+
+
+// =====================================================
+// DETECTION TROU
+// =====================================================
 
 function ballFallsIntoPocket(ball) {
+
+  if (ball.isCueBall) {
+    return false;
+  }
 
   const pocketPositions =
     getPocketPositions();
@@ -379,7 +424,8 @@ function ballFallsIntoPocket(ball) {
         distanceY * distanceY
       );
 
-    if (distance < 30) {
+    if (distance < pocketRadius) {
+
       return true;
     }
   }
@@ -388,9 +434,9 @@ function ballFallsIntoPocket(ball) {
 }
 
 
-// ======================
-// COLLISION ENTRE BALLES
-// ======================
+// =====================================================
+// COLLISIONS
+// =====================================================
 
 function handleBallCollisions() {
 
@@ -408,8 +454,12 @@ function handleBallCollisions() {
     }
 
     for (
-      let secondIndex = firstIndex + 1;
-      secondIndex < billiardBalls.length;
+      let secondIndex =
+        firstIndex + 1;
+
+      secondIndex <
+      billiardBalls.length;
+
       secondIndex++
     ) {
 
@@ -434,7 +484,10 @@ function handleBallCollisions() {
           distanceY * distanceY
         );
 
-      if (distance < ballRadius * 2) {
+      const minimumDistance =
+        ballRadius * 2;
+
+      if (distance < minimumDistance) {
 
         const angle =
           Math.atan2(
@@ -442,13 +495,40 @@ function handleBallCollisions() {
             distanceX
           );
 
-        const pushForce = 2;
+        const overlap =
+          minimumDistance - distance;
+
+        const separationX =
+          Math.cos(angle) *
+          overlap *
+          0.5;
+
+        const separationY =
+          Math.sin(angle) *
+          overlap *
+          0.5;
+
+        firstBall.positionX -=
+          separationX;
+
+        firstBall.positionY -=
+          separationY;
+
+        secondBall.positionX +=
+          separationX;
+
+        secondBall.positionY +=
+          separationY;
+
+        const pushForce = 1.8;
 
         const pushX =
-          Math.cos(angle) * pushForce;
+          Math.cos(angle) *
+          pushForce;
 
         const pushY =
-          Math.sin(angle) * pushForce;
+          Math.sin(angle) *
+          pushForce;
 
         firstBall.velocityX -= pushX;
         firstBall.velocityY -= pushY;
@@ -461,9 +541,9 @@ function handleBallCollisions() {
 }
 
 
-// ======================
+// =====================================================
 // ANIMATION
-// ======================
+// =====================================================
 
 function animate() {
 
@@ -491,14 +571,37 @@ function animate() {
     }
 
     // mouvement
-    ball.positionX += ball.velocityX;
-    ball.positionY += ball.velocityY;
+    ball.positionX +=
+      ball.velocityX;
+
+    ball.positionY +=
+      ball.velocityY;
 
     // friction
-    ball.velocityX *= friction;
-    ball.velocityY *= friction;
+    ball.velocityX *=
+      frictionStrength;
 
-    // bandes gauche / droite
+    ball.velocityY *=
+      frictionStrength;
+
+    // arrêt
+    if (
+      Math.abs(ball.velocityX)
+      < 0.02
+    ) {
+
+      ball.velocityX = 0;
+    }
+
+    if (
+      Math.abs(ball.velocityY)
+      < 0.02
+    ) {
+
+      ball.velocityY = 0;
+    }
+
+    // rebonds horizontaux
     if (ball.positionX < minimumX) {
 
       ball.positionX = minimumX;
@@ -515,7 +618,7 @@ function animate() {
         -reboundStrength;
     }
 
-    // bandes haut / bas
+    // rebonds verticaux
     if (ball.positionY < minimumY) {
 
       ball.positionY = minimumY;
@@ -533,24 +636,30 @@ function animate() {
     }
 
     // trous
-    if (ballFallsIntoPocket(ball)) {
+    if (
+      ballFallsIntoPocket(ball)
+    ) {
 
       ball.isVisible = false;
 
       ball.velocityX = 0;
+
       ball.velocityY = 0;
 
-      ball.element.style.opacity = 0;
+      ball.element.style.opacity =
+        0;
 
       return;
     }
 
     // affichage
     ball.element.style.left =
-      ball.positionX + "px";
+      (ball.positionX - ballRadius)
+      + "px";
 
     ball.element.style.top =
-      ball.positionY + "px";
+      (ball.positionY - ballRadius)
+      + "px";
   });
 
   handleBallCollisions();
@@ -559,22 +668,24 @@ function animate() {
 }
 
 
-// ======================
+// =====================================================
 // INITIALISATION
-// ======================
+// =====================================================
 
 billiardBalls.forEach(function (ball) {
 
   ball.element.style.left =
-    ball.positionX + "px";
+    (ball.positionX - ballRadius)
+    + "px";
 
   ball.element.style.top =
-    ball.positionY + "px";
+    (ball.positionY - ballRadius)
+    + "px";
 });
 
 
-// ======================
+// =====================================================
 // DEMARRAGE
-// ======================
+// =====================================================
 
 animate();
