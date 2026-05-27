@@ -82,7 +82,7 @@ const dailyMessages = [
   {
 
     text:
-      "★ Today is the final nonsense pool table game for now. I created this tiny absurd project during ten days of coding and emotional confusion. If one day you feel sad, overwhelmed, or strangely nostalgic, you can always send the words 'nonsense pool table' to subscribe again to fresh daily nonsense. I am leaving this conversation hoping there will eventually be another one in real life.",
+      "★ Today is the last game of pool table, I've coded it only for 10 days. But whenever you feel down or sadder than usual, text -nonsense pool table- for subscribing again with new daily bullshit. I’m leaving this conversation hoping there’s a next time in person (?)",
 
     image:
       "silly3.png"
@@ -91,7 +91,7 @@ const dailyMessages = [
   {
 
     text:
-      "★ Congratulations. You survived another complicated day on Earth. That deserves at least one imaginary trophy, one peaceful nap, and one dramatic movie scene where you walk away from an explosion without looking back.",
+      "★ Congratulations. You survived another complicated day on Earth. This is the last game of nonsense pool table, that deserves at least one imaginary trophy, one peaceful nap, and a wish to grant.",
 
     image:
       "silly3.png"
