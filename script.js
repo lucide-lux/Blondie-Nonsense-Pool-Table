@@ -36,20 +36,24 @@ let pointerPositionY = 0;
 
 let hasPlayerAlreadyShot = false;
 
+let isTouchingScreen = false;
+
 
 // =====================================================
-// CONSTANTES PHYSIQUES
+// CONSTANTES
 // =====================================================
 
 const ballRadius = 20;
 
-const tableCushionSize = 45;
+const tableCushionSize = 35;
 
-const frictionStrength = 0.99;
+const frictionStrength = 0.985;
 
-const reboundStrength = 0.95;
+const reboundStrength = 0.92;
 
-const pocketDetectionRadius = 30;
+const pocketDetectionRadius = 32;
+
+const shootingPower = 14;
 
 
 // =====================================================
@@ -59,8 +63,12 @@ const pocketDetectionRadius = 30;
 function getGameTableDimensions() {
 
   return {
-    width: gameTableElement.clientWidth,
-    height: gameTableElement.clientHeight
+
+    width:
+      gameTableElement.clientWidth,
+
+    height:
+      gameTableElement.clientHeight
   };
 }
 
@@ -72,16 +80,18 @@ function getGameTableDimensions() {
 const dailyMessages = [
 
   {
+
     text:
-      "★ Today is the last game of pool table. I've coded it only for 10 days. But whenever you feel down or sadder than usual, text 'nonsense pool table' for subscribing again with new daily bullshit. I’m leaving this conversation hoping there’s a next time in person (?).",
+      "★ Today is the final nonsense pool table game for now. I created this tiny absurd project during ten days of coding and emotional confusion. If one day you feel sad, overwhelmed, or strangely nostalgic, you can always send the words 'nonsense pool table' to subscribe again to fresh daily nonsense. I am leaving this conversation hoping there will eventually be another one in real life.",
 
     image:
       "silly3.png"
   },
 
   {
+
     text:
-      "★ Congratulations. You survived another chaotic day on Earth . This is the last (for now) game of nonsense pool table, that deserves at least one imaginary trophy and a wish to grant.",
+      "★ Congratulations. You survived another complicated day on Earth. That deserves at least one imaginary trophy, one peaceful nap, and one dramatic movie scene where you walk away from an explosion without looking back.",
 
     image:
       "silly3.png"
@@ -106,19 +116,25 @@ function displayMessage(messageObject) {
 
     imageHtml = `
       <br>
+
       <img
         src="${messageObject.image}"
+
         style="
-          width:60px;
-          margin-top:10px;
+          width:80px;
+          margin-top:15px;
+          border-radius:12px;
         "
       >
     `;
   }
 
   messageTextElement.innerHTML = `
+
     ${messageObject.text}
+
     ${imageHtml}
+
   `;
 }
 
@@ -132,10 +148,9 @@ const randomMessageIndex =
     Math.random() * dailyMessages.length
   );
 
-const initialMessage =
-  dailyMessages[randomMessageIndex];
-
-displayMessage(initialMessage);
+displayMessage(
+  dailyMessages[randomMessageIndex]
+);
 
 
 // =====================================================
@@ -145,10 +160,12 @@ displayMessage(initialMessage);
 const billiardBalls = [
 
   {
-    element: cueBallElement,
 
-    positionX: 150,
-    positionY: 150,
+    element:
+      cueBallElement,
+
+    positionX: 120,
+    positionY: 180,
 
     velocityX: 0,
     velocityY: 0,
@@ -159,23 +176,11 @@ const billiardBalls = [
   },
 
   {
-    element: firstBallElement,
 
-    positionX: 300,
-    positionY: 200,
+    element:
+      firstBallElement,
 
-    velocityX: 0,
-    velocityY: 0,
-
-    isVisible: true,
-
-    isCueBall: false
-  },
-
-  {
-    element: secondBallElement,
-
-    positionX: 350,
+    positionX: 320,
     positionY: 180,
 
     velocityX: 0,
@@ -187,10 +192,28 @@ const billiardBalls = [
   },
 
   {
-    element: thirdBallElement,
 
-    positionX: 350,
-    positionY: 220,
+    element:
+      secondBallElement,
+
+    positionX: 370,
+    positionY: 150,
+
+    velocityX: 0,
+    velocityY: 0,
+
+    isVisible: true,
+
+    isCueBall: false
+  },
+
+  {
+
+    element:
+      thirdBallElement,
+
+    positionX: 370,
+    positionY: 210,
 
     velocityX: 0,
     velocityY: 0,
@@ -204,7 +227,7 @@ const billiardBalls = [
 
 
 // =====================================================
-// POSITIONS DES TROUS
+// TROUS
 // =====================================================
 
 function getPocketPositions() {
@@ -215,33 +238,33 @@ function getPocketPositions() {
   return [
 
     {
-      x: 30,
-      y: 30
+      x: 25,
+      y: 25
     },
 
     {
       x: tableDimensions.width / 2,
-      y: 30
+      y: 25
     },
 
     {
-      x: tableDimensions.width - 30,
-      y: 30
+      x: tableDimensions.width - 25,
+      y: 25
     },
 
     {
-      x: 30,
-      y: tableDimensions.height - 30
+      x: 25,
+      y: tableDimensions.height - 25
     },
 
     {
       x: tableDimensions.width / 2,
-      y: tableDimensions.height - 30
+      y: tableDimensions.height - 25
     },
 
     {
-      x: tableDimensions.width - 30,
-      y: tableDimensions.height - 30
+      x: tableDimensions.width - 25,
+      y: tableDimensions.height - 25
     }
 
   ];
@@ -249,7 +272,7 @@ function getPocketPositions() {
 
 
 // =====================================================
-// POSITION SOURIS ET MOBILE
+// POSITION POINTEUR
 // =====================================================
 
 function updatePointerPosition(
@@ -261,10 +284,12 @@ function updatePointerPosition(
     gameTableElement.getBoundingClientRect();
 
   pointerPositionX =
-    clientPositionX - tableRectangle.left;
+    clientPositionX -
+    tableRectangle.left;
 
   pointerPositionY =
-    clientPositionY - tableRectangle.top;
+    clientPositionY -
+    tableRectangle.top;
 
   if (cueStickElement) {
 
@@ -308,16 +333,18 @@ document.addEventListener(
       firstTouch.clientX,
       firstTouch.clientY
     );
+
+    touchEvent.preventDefault();
   },
-  { passive: true }
+  { passive: false }
 );
 
 
 // =====================================================
-// TIR
+// TIR PRINCIPAL
 // =====================================================
 
-function shootCueBall() {
+function shootCueBallTowardsPointer() {
 
   if (hasPlayerAlreadyShot) {
     return;
@@ -325,25 +352,16 @@ function shootCueBall() {
 
   hasPlayerAlreadyShot = true;
 
-  billiardBalls.forEach(function (ball) {
-
-    ball.velocityX = 0;
-    ball.velocityY = 0;
-  });
-
-  const randomTargetIndex =
-    1 + Math.floor(Math.random() * 3);
-
-  const targetBall =
-    billiardBalls[randomTargetIndex];
+  const cueBall =
+    billiardBalls[0];
 
   const distanceX =
-    targetBall.positionX -
-    billiardBalls[0].positionX;
+    pointerPositionX -
+    cueBall.positionX;
 
   const distanceY =
-    targetBall.positionY -
-    billiardBalls[0].positionY;
+    pointerPositionY -
+    cueBall.positionY;
 
   const distanceLength =
     Math.sqrt(
@@ -355,11 +373,13 @@ function shootCueBall() {
     return;
   }
 
-  billiardBalls[0].velocityX =
-    (distanceX / distanceLength) * 12;
+  cueBall.velocityX =
+    (distanceX / distanceLength)
+    * shootingPower;
 
-  billiardBalls[0].velocityY =
-    (distanceY / distanceLength) * 12;
+  cueBall.velocityY =
+    (distanceY / distanceLength)
+    * shootingPower;
 
   setTimeout(function () {
 
@@ -368,65 +388,57 @@ function shootCueBall() {
 
     const selectedMessage =
       dailyMessages[
-        currentDay % dailyMessages.length
+        currentDay %
+        dailyMessages.length
       ];
 
-    displayMessage(selectedMessage);
+    displayMessage(
+      selectedMessage
+    );
 
-    messageBoxElement.style.opacity = 1;
+    messageBoxElement.style.opacity =
+      1;
 
-  }, 2000);
+  }, 1800);
 }
 
 
 // =====================================================
-// CLIC BOULE BLANCHE
+// CLIC SOURIS
 // =====================================================
 
 cueBallElement.addEventListener(
   "click",
-  shootCueBall
+  function () {
+
+    shootCueBallTowardsPointer();
+  }
 );
 
 
 // =====================================================
-// TAP MOBILE
+// TOUCH MOBILE
 // =====================================================
 
-document.addEventListener(
+cueBallElement.addEventListener(
   "touchstart",
   function (touchEvent) {
 
     const firstTouch =
       touchEvent.touches[0];
 
-    const tableRectangle =
-      gameTableElement.getBoundingClientRect();
+    updatePointerPosition(
+      firstTouch.clientX,
+      firstTouch.clientY
+    );
 
-    const touchPositionX =
-      firstTouch.clientX - tableRectangle.left;
+    isTouchingScreen = true;
 
-    const touchPositionY =
-      firstTouch.clientY - tableRectangle.top;
+    shootCueBallTowardsPointer();
 
-    const distanceX =
-      touchPositionX -
-      billiardBalls[0].positionX;
-
-    const distanceY =
-      touchPositionY -
-      billiardBalls[0].positionY;
-
-    const touchDistance =
-      Math.sqrt(
-        distanceX * distanceX +
-        distanceY * distanceY
-      );
-
-    if (touchDistance < 60) {
-      shootCueBall();
-    }
-  }
+    touchEvent.preventDefault();
+  },
+  { passive: false }
 );
 
 
@@ -457,7 +469,11 @@ function ballFallsIntoPocket(ball) {
         distanceY * distanceY
       );
 
-    if (distance < pocketDetectionRadius) {
+    if (
+      distance <
+      pocketDetectionRadius
+    ) {
+
       return true;
     }
   }
@@ -496,7 +512,9 @@ function handleBallCollisions() {
     ) {
 
       const secondBall =
-        billiardBalls[secondBallIndex];
+        billiardBalls[
+          secondBallIndex
+        ];
 
       if (!secondBall.isVisible) {
         continue;
@@ -527,40 +545,21 @@ function handleBallCollisions() {
             distanceX
           );
 
-        const separationDistance =
-          minimumDistance - distance;
+        const pushForce = 2;
 
-        const separationX =
-          Math.cos(collisionAngle) *
-          separationDistance *
-          0.5;
+        const pushX =
+          Math.cos(collisionAngle)
+          * pushForce;
 
-        const separationY =
-          Math.sin(collisionAngle) *
-          separationDistance *
-          0.5;
+        const pushY =
+          Math.sin(collisionAngle)
+          * pushForce;
 
-        firstBall.positionX -= separationX;
-        firstBall.positionY -= separationY;
+        firstBall.velocityX -= pushX;
+        firstBall.velocityY -= pushY;
 
-        secondBall.positionX += separationX;
-        secondBall.positionY += separationY;
-
-        const collisionForce = 2;
-
-        const velocityPushX =
-          Math.cos(collisionAngle) *
-          collisionForce;
-
-        const velocityPushY =
-          Math.sin(collisionAngle) *
-          collisionForce;
-
-        firstBall.velocityX -= velocityPushX;
-        firstBall.velocityY -= velocityPushY;
-
-        secondBall.velocityX += velocityPushX;
-        secondBall.velocityY += velocityPushY;
+        secondBall.velocityX += pushX;
+        secondBall.velocityY += pushY;
       }
     }
   }
@@ -568,7 +567,7 @@ function handleBallCollisions() {
 
 
 // =====================================================
-// ANIMATION PRINCIPALE
+// ANIMATION
 // =====================================================
 
 function animateGame() {
@@ -596,25 +595,39 @@ function animateGame() {
       return;
     }
 
-    // mouvement
-    ball.positionX += ball.velocityX;
-    ball.positionY += ball.velocityY;
+    ball.positionX +=
+      ball.velocityX;
 
-    // friction
-    ball.velocityX *= frictionStrength;
-    ball.velocityY *= frictionStrength;
+    ball.positionY +=
+      ball.velocityY;
 
-    // arrêt progressif
-    if (Math.abs(ball.velocityX) < 0.01) {
+    ball.velocityX *=
+      frictionStrength;
+
+    ball.velocityY *=
+      frictionStrength;
+
+    if (
+      Math.abs(ball.velocityX)
+      < 0.02
+    ) {
+
       ball.velocityX = 0;
     }
 
-    if (Math.abs(ball.velocityY) < 0.01) {
+    if (
+      Math.abs(ball.velocityY)
+      < 0.02
+    ) {
+
       ball.velocityY = 0;
     }
 
-    // bande gauche
-    if (ball.positionX < minimumPositionX) {
+    // rebonds horizontaux
+    if (
+      ball.positionX <
+      minimumPositionX
+    ) {
 
       ball.positionX =
         minimumPositionX;
@@ -623,8 +636,10 @@ function animateGame() {
         -reboundStrength;
     }
 
-    // bande droite
-    if (ball.positionX > maximumPositionX) {
+    if (
+      ball.positionX >
+      maximumPositionX
+    ) {
 
       ball.positionX =
         maximumPositionX;
@@ -633,8 +648,11 @@ function animateGame() {
         -reboundStrength;
     }
 
-    // bande haute
-    if (ball.positionY < minimumPositionY) {
+    // rebonds verticaux
+    if (
+      ball.positionY <
+      minimumPositionY
+    ) {
 
       ball.positionY =
         minimumPositionY;
@@ -643,8 +661,10 @@ function animateGame() {
         -reboundStrength;
     }
 
-    // bande basse
-    if (ball.positionY > maximumPositionY) {
+    if (
+      ball.positionY >
+      maximumPositionY
+    ) {
 
       ball.positionY =
         maximumPositionY;
@@ -654,14 +674,14 @@ function animateGame() {
     }
 
     // trous
-    if (ballFallsIntoPocket(ball)) {
+    if (
+      ballFallsIntoPocket(ball)
+    ) {
 
       ball.isVisible = false;
 
-      ball.velocityX = 0;
-      ball.velocityY = 0;
-
-      ball.element.style.opacity = 0;
+      ball.element.style.opacity =
+        0;
 
       return;
     }
@@ -705,3 +725,57 @@ billiardBalls.forEach(function (ball) {
 // =====================================================
 
 animateGame();
+
+Ajoute aussi ce CSS IMPORTANT sinon le tactile restera cassé :
+
+body {
+
+  margin: 0;
+
+  overflow: hidden;
+
+  touch-action: none;
+
+  background: black;
+}
+
+#game {
+
+  position: relative;
+
+  width: 100vw;
+
+  height: 70vh;
+
+  max-width: 900px;
+
+  margin: auto;
+
+  overflow: hidden;
+}
+
+.ball {
+
+  position: absolute;
+
+  width: 40px;
+
+  height: 40px;
+
+  border-radius: 50%;
+
+  touch-action: none;
+}
+
+#messageBox {
+
+  width: 90%;
+
+  max-width: 500px;
+
+  margin: 20px auto;
+
+  opacity: 0;
+
+  transition: opacity 1s;
+}
