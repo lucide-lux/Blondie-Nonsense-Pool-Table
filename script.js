@@ -69,6 +69,13 @@ const messages = [
     silly3.png
       
   },
+  {
+    text:
+      "★ Today is the last game of pool table, I've coded it only for 10 days. But whenever you feel down or sadder than usual, text -nonsense pool table- for subscribing again with new daily bullshit. I’m leaving this conversation hoping there’s a next time in person (?).",
+    image: 
+    silly3.png
+      
+  },
 
 ];
 
