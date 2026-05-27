@@ -126,37 +126,3 @@ body {
   z-index: 9999;
 }
 
-body {
-
-  overflow: hidden;
-
-  touch-action: none;
-}
-
-#game {
-
-  position: relative;
-
-  width: 100vw;
-
-  height: 70vh;
-
-  max-width: 1200px;
-
-  margin: auto;
-
-  overflow: hidden;
-}
-
-.ball {
-
-  position: absolute;
-
-  width: 40px;
-
-  height: 40px;
-
-  border-radius: 50%;
-
-  touch-action: none;
-}
