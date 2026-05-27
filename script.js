@@ -2,13 +2,23 @@
 // ELEMENTS HTML
 // ======================
 
-const firstBallElement = document.getElementById("ball1");
-const secondBallElement = document.getElementById("ball2");
-const thirdBallElement = document.getElementById("ball3");
+const gameElement =
+  document.getElementById("game");
 
-const cueBallElement = document.getElementById("specialBall");
+const firstBallElement =
+  document.getElementById("ball1");
 
-const cueElement = document.getElementById("cue");
+const secondBallElement =
+  document.getElementById("ball2");
+
+const thirdBallElement =
+  document.getElementById("ball3");
+
+const cueBallElement =
+  document.getElementById("specialBall");
+
+const cueElement =
+  document.getElementById("cue");
 
 const messageBoxElement =
   document.getElementById("messageBox");
@@ -25,6 +35,36 @@ let pointerPositionX = 0;
 let pointerPositionY = 0;
 
 let hasShot = false;
+
+
+// ======================
+// ZOOM MOBILE
+// ======================
+
+let currentScale = 1;
+let initialPinchDistance = null;
+
+function getTouchDistance(touches) {
+
+  const dx =
+    touches[0].clientX -
+    touches[1].clientX;
+
+  const dy =
+    touches[0].clientY -
+    touches[1].clientY;
+
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function applyZoom() {
+
+  gameElement.style.transform =
+    `scale(${currentScale})`;
+
+  gameElement.style.transformOrigin =
+    "center center";
+}
 
 
 // ======================
@@ -46,9 +86,6 @@ const reboundStrength = 0.95;
 
 function getTableDimensions() {
 
-  const gameElement =
-    document.getElementById("game");
-
   return {
     width: gameElement.clientWidth,
     height: gameElement.clientHeight
@@ -62,15 +99,13 @@ function getTableDimensions() {
 
 const messages = [
 
-  { 
-    
+  {
     text:
-      "★ Today is the last game of pool table, I've coded it only for 10 days. But whenever you feel down or sadder than usual, text -nonsense pool table- for subscribing again with new daily bullshit. I’m leaving this conversationand to the next time in person if you want to.",
+      "★ Today is the last game of pool table, I've coded it only for 10 days. But whenever you feel down or sadder than usual, text -nonsense pool table- for subscribing again with new daily bullshit. I’m leaving this conversation to the next time, in person if you want to.",
 
     image:
       "assets/silly3.png"
   }
-
 
 ];
 
@@ -158,10 +193,7 @@ function getPocketPositions() {
 
   return [
 
-    {
-      x: 30,
-      y: 30
-    },
+    { x: 30, y: 30 },
 
     {
       x: tableDimensions.width / 2,
@@ -193,21 +225,19 @@ function getPocketPositions() {
 
 
 // ======================
-// SOURIS + MOBILE
+// POINTER
 // ======================
 
 function updatePointerPosition(clientX, clientY) {
 
   const tableRectangle =
-    document
-      .getElementById("game")
-      .getBoundingClientRect();
+    gameElement.getBoundingClientRect();
 
   pointerPositionX =
-    clientX - tableRectangle.left;
+    (clientX - tableRectangle.left) / currentScale;
 
   pointerPositionY =
-    clientY - tableRectangle.top;
+    (clientY - tableRectangle.top) / currentScale;
 
   cueElement.style.left =
     clientX + "px";
@@ -217,7 +247,10 @@ function updatePointerPosition(clientX, clientY) {
 }
 
 
+// ======================
 // PC
+// ======================
+
 document.addEventListener(
   "mousemove",
   function (event) {
@@ -230,20 +263,68 @@ document.addEventListener(
 );
 
 
-// MOBILE
+// ======================
+// MOBILE MOVE + PINCH
+// ======================
+
 document.addEventListener(
   "touchmove",
   function (event) {
 
-    const touch =
-      event.touches[0];
+    // pinch zoom
+    if (event.touches.length === 2) {
 
-    updatePointerPosition(
-      touch.clientX,
-      touch.clientY
-    );
+      const currentDistance =
+        getTouchDistance(event.touches);
+
+      if (initialPinchDistance) {
+
+        const scaleFactor =
+          currentDistance / initialPinchDistance;
+
+        currentScale *= scaleFactor;
+
+        currentScale =
+          Math.max(
+            0.7,
+            Math.min(currentScale, 3)
+          );
+
+        applyZoom();
+      }
+
+      initialPinchDistance =
+        currentDistance;
+
+      return;
+    }
+
+    // déplacement normal
+    if (event.touches.length === 1) {
+
+      const touch =
+        event.touches[0];
+
+      updatePointerPosition(
+        touch.clientX,
+        touch.clientY
+      );
+    }
   },
   { passive: true }
+);
+
+
+// ======================
+// RESET PINCH
+// ======================
+
+document.addEventListener(
+  "touchend",
+  function () {
+
+    initialPinchDistance = null;
+  }
 );
 
 
@@ -324,19 +405,23 @@ document.addEventListener(
   "touchstart",
   function (event) {
 
+    if (event.touches.length !== 1) {
+      return;
+    }
+
     const touch =
       event.touches[0];
 
     const tableRectangle =
-      document
-        .getElementById("game")
-        .getBoundingClientRect();
+      gameElement.getBoundingClientRect();
 
     const touchPositionX =
-      touch.clientX - tableRectangle.left;
+      (touch.clientX - tableRectangle.left)
+      / currentScale;
 
     const touchPositionY =
-      touch.clientY - tableRectangle.top;
+      (touch.clientY - tableRectangle.top)
+      / currentScale;
 
     const distanceX =
       touchPositionX -
@@ -353,6 +438,7 @@ document.addEventListener(
       );
 
     if (touchDistance < 60) {
+
       shootCueBall();
     }
   }
@@ -392,7 +478,7 @@ function ballFallsIntoPocket(ball) {
 
 
 // ======================
-// COLLISION ENTRE BALLES
+// COLLISIONS
 // ======================
 
 function handleBallCollisions() {
@@ -440,10 +526,7 @@ function handleBallCollisions() {
       if (distance < ballRadius * 2) {
 
         const angle =
-          Math.atan2(
-            distanceY,
-            distanceX
-          );
+          Math.atan2(distanceY, distanceX);
 
         const pushForce = 2;
 
@@ -493,49 +576,36 @@ function animate() {
       return;
     }
 
-    // mouvement
     ball.positionX += ball.velocityX;
     ball.positionY += ball.velocityY;
 
-    // friction
     ball.velocityX *= friction;
     ball.velocityY *= friction;
 
-    // bandes gauche / droite
     if (ball.positionX < minimumX) {
 
       ball.positionX = minimumX;
-
-      ball.velocityX *=
-        -reboundStrength;
+      ball.velocityX *= -reboundStrength;
     }
 
     if (ball.positionX > maximumX) {
 
       ball.positionX = maximumX;
-
-      ball.velocityX *=
-        -reboundStrength;
+      ball.velocityX *= -reboundStrength;
     }
 
-    // bandes haut / bas
     if (ball.positionY < minimumY) {
 
       ball.positionY = minimumY;
-
-      ball.velocityY *=
-        -reboundStrength;
+      ball.velocityY *= -reboundStrength;
     }
 
     if (ball.positionY > maximumY) {
 
       ball.positionY = maximumY;
-
-      ball.velocityY *=
-        -reboundStrength;
+      ball.velocityY *= -reboundStrength;
     }
 
-    // trous
     if (ballFallsIntoPocket(ball)) {
 
       ball.isVisible = false;
@@ -548,7 +618,6 @@ function animate() {
       return;
     }
 
-    // affichage
     ball.element.style.left =
       ball.positionX + "px";
 
@@ -560,6 +629,32 @@ function animate() {
 
   requestAnimationFrame(animate);
 }
+
+
+// ======================
+// RESPONSIVE
+// ======================
+
+function resizeGame() {
+
+  if (window.innerWidth < 768) {
+
+    gameElement.style.width = "95vw";
+    gameElement.style.height = "60vh";
+  }
+  else {
+
+    gameElement.style.width = "900px";
+    gameElement.style.height = "500px";
+  }
+}
+
+window.addEventListener(
+  "resize",
+  resizeGame
+);
+
+resizeGame();
 
 
 // ======================
